@@ -7,7 +7,7 @@
                 <?php
         foreach($course_list as $Course){
             ?>
-                <option value="<?php echo $Course->course_id ?>"><?php echo $Course->description ?></option>
+                <option value="<?php echo $Course->course_id ?>"><?php echo $Course->title ?></option>
                 <?php
         }
         ?>

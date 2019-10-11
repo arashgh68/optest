@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 class User extends TA_Admin
 {
@@ -20,7 +20,7 @@ class User extends TA_Admin
         $this->render('user/list');
     }
 
-    public function user_list_ajax()// list users as ajax
+    public function user_list_ajax() // list users as ajax
     {
         $data = $this->input->post('datas');
         $perpage = $data['perpage'];
@@ -88,7 +88,6 @@ class User extends TA_Admin
                         $fourgr .= $gro->name;
                 }
                 $j++;
-
             }
             $output .= '<td>';
             if ($fourgr != '')
@@ -158,7 +157,7 @@ class User extends TA_Admin
             $output .= '<td>' . $row->quiz_false . '</td>';
             $output .= '<td>100</td>';
             $output .= '<td>' . $row->quiz_start . '</td>';
-            $output .= '<td><button onclick="location.href=\'' . base_url('admin/user/user_answer_sheet/') .$row->user_quiz_id. '\'" class="btn btn-warning edit">دریافت</button></td>';
+            $output .= '<td><button onclick="location.href=\'' . base_url('admin/user/user_answer_sheet/') . $row->user_quiz_id . '\'" class="btn btn-warning edit">دریافت</button></td>';
             $output .= '</tr>';
             $i++;
         }
@@ -167,7 +166,6 @@ class User extends TA_Admin
         $output .= $this->pagination->create_links();
 
         echo $output;
-
     }
 
     public function user_quiz_result($user_id) //getting the user quiz answer sheets
@@ -185,17 +183,44 @@ class User extends TA_Admin
     function user_answer_sheet($user_quiz_id)
     {
         //correct sign glyphicon glyphicon-ok-circle false sign glyphicon glyphicon-remove-circle
-        $all_question_answers=$this->user_manager_model->_get_user_quiz_answer_list($user_quiz_id);
-        foreach($all_question_answers as $question) {
-            $answer_sheet[$question->question_id] = $this->user_manager_model->
-               _get_user_quiz_question_chek($question->question_id, $question->answer_id);
+        $all_question_answers = $this->user_manager_model->_get_user_quiz_answer_list($user_quiz_id);
+        foreach ($all_question_answers as $question) {
+            $answer_sheet[$question->question_id] = $this->user_manager_model->_get_user_quiz_question_chek($question->question_id, $question->answer_id);
         }
-        $this->data['answer_sheet']=$answer_sheet;
+        $this->data['answer_sheet'] = $answer_sheet;
         $this->data['page_title'] = 'پاسخنامه';
         //$this->data['user_id'] = $user_id;
         //$userinfo = $this->user_manager_model->__get_userinfo($user_id);
         //$this->data['Userfullname'] = $userinfo->first_name . ' ' . $userinfo->last_name;
         //$this->data['styles'][]='<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">';
         $this->render('user/user_answer_sheet');
+    }
+
+    function create_group()
+    {
+
+        $this->render('user/create_group');
+    }
+
+    function save_users()
+    {
+        if (isset($_POST['userName'])) {
+            $group = array('2'); // Sets user to normal memebers.
+
+            for ($i = 0; $i < count($this->input->post('userName')); $i++) {
+                if ($this->input->post('userName') !== "") {
+                    $email = "test@test.com";
+                    $identity = $this->input->post('userName')[$i];
+                    $password = $this->input->post('password')[$i];
+
+                    $additional_data = array(
+                        'first_name' => $this->input->post('firstName')[$i],
+                        'last_name' => $this->input->post('lastName')[$i],
+                    );
+
+                    $this->ion_auth->register($identity, $password, $email, $additional_data, $group);
+                }
+            }
+        }
     }
 }
